@@ -13,7 +13,8 @@ def as_csv_str(bytestr):
 
 
 def write_event(track, time, identifier, data):
-    Items = [f"{track}, {time}, {identifier}"]
+    # sc: preceding comma added
+    Items = [f",{track}, {time}, {identifier}"]
     if identifier.startswith("System") or identifier == "Sequencer_specific":
         fmt = "{:02X}"
     else:
