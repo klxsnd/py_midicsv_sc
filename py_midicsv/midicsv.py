@@ -21,14 +21,18 @@ def parse(file, strict=True):
     csv_file = []
     pattern = read_midifile(file, strict)
     # SC: row of column names added, along with preceeding commas
+    row_name = 1
     csv_file.append(f"RowName, Track, Time, Type, P1, P2, P3, P4\n")
-    csv_file.append(f",0, 0, Header, {pattern.format}, {len(pattern)}, {pattern.resolution}\n")
+    csv_file.append(f"{row_name}, 0, 0, Header, {pattern.format}, {len(pattern)}, {pattern.resolution}\n")
+    row_name += 1
     for index, track in enumerate(pattern):
-        csv_file.append(f"{index + 1}, {0}, Start_track\n")
+        csv_file.append(f"{row_name}, {index + 1}, {0}, Start_track\n")
+        row_name += 1
         abstime = 0
         for event in track:
             abstime += event.tick
             converted = midi_to_csv_map[type(event)](index + 1, abstime, event)
-            csv_file.append(converted)
-    csv_file.append(",0, 0, End_of_file")
+            csv_file.append(f"{row_name}{converted}")
+            row_name += 1
+    csv_file.append(f"{row_name}, 0, 0, End_of_file")
     return csv_file
